@@ -42,3 +42,8 @@ next-env.d.ts
 /capture
 /video/public/clips
 /video/out
+
+# 하위 패키지
+video/node_modules
+video/out
+video/public/clips
