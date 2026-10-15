@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Pretendard Variable";
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
+}
+
+:root {
+  --bg: #10151f;
+  --panel: #171e2b;
+  --line: #2e3747;
+  --ink: #e8ecf2;
+  --muted: #8e98aa;
+  --threat: #ff4d4f;
+  --lockdown: #f5b942;
+  --evac: #3dd68c;
+  --inva: #5ba8ff;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-threat: var(--threat);
+  --color-lockdown: var(--lockdown);
+  --color-evac: var(--evac);
+  --color-inva: var(--inva);
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+}
+
+html { color-scheme: dark; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center h-9 px-3.5 rounded-md text-[13.5px] font-semibold border border-line bg-panel text-ink transition-colors;
+}
+.btn:hover { background: #1f2838; }
+.btn:focus-visible { outline: 2px solid var(--inva); outline-offset: 2px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn-primary:hover { background: #ffffff; }
+.btn-sm { @apply h-7 px-2.5 text-[12px]; }
+
+.caret { color: var(--threat); animation: blink 0.9s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .caret { animation: none; } }
+
+/* 평면도 크기: 1080p에서 세 층이 한 화면에 들어오도록 높이를 고정하고 폭은 비율대로 */
+.plan svg { height: 282px; width: auto; max-width: 100%; }
+@media (max-width: 1400px) { .plan svg { height: auto; width: 100%; } }
