@@ -1,0 +1,22 @@
+{
+  "name": "sixty-seconds-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Main out/demo.mp4 --browser-executable=/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
+    "still": "remotion still src/index.ts Main --browser-executable=/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.535",
+    "@remotion/fonts": "^4.0.535",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5.9.3"
+  }
+}
