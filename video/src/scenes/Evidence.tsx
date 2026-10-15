@@ -71,11 +71,13 @@ const Cameras: React.FC = () => {
 const Flow: React.FC = () => {
   const f = useCurrentFrame();
   const boxes = ["CCTV 영상", "지능형 탐지", "관제요원 112 신고"];
-  const bw = 360, gap = 90, y = 470, x0 = (1920 - (bw * 3 + gap * 2)) / 2;
+  // 상자 3 + 끊긴 연결(100) + 점선 상자(300)를 한 덩어리로 가운데 정렬
+  const bw = 330, gap = 70, y = 470, pw = 300, cutGap = 130;
+  const x0 = (1920 - (bw * 3 + gap * 2 + cutGap + pw)) / 2;
   const prog = (i: number) => ease(clamp01((f - 10 - i * 22) / 16));
   const arrow = (i: number) => ease(clamp01((f - 24 - i * 22) / 14));
   const cut = ease(clamp01((f - 95) / 14));
-  const px = x0 + (bw + gap) * 3 + 20;
+  const px = x0 + bw * 3 + gap * 2 + cutGap;
   return (
     <AbsoluteFill style={{ fontFamily: FONT }}>
       <svg width="1920" height="1080">
@@ -95,12 +97,12 @@ const Flow: React.FC = () => {
         {/* 끊긴 연결 + 건물 안 사람들 */}
         <g opacity={cut}>
           <line x1={x0 + bw * 3 + gap * 2 + 6} y1={y + 60} x2={px - 10} y2={y + 60} stroke={C.red} strokeWidth="4" strokeDasharray="10 10" />
-          <text x={(x0 + bw * 3 + gap * 2 + px) / 2} y={y + 36} textAnchor="middle" fontFamily={FONT} fontSize="26" fontWeight="600" fill={C.red}>연결 없음</text>
+          <text x={(x0 + bw * 3 + gap * 2 + px) / 2} y={y + 36} textAnchor="middle" fontFamily={FONT} fontSize="24" fontWeight="600" fill={C.red}>연결 없음</text>
         </g>
         <g opacity={cut} transform={`translate(${px} ${y - 10})`}>
-          <rect x="0" y="0" width="300" height="140" rx="14" fill="none" stroke={C.red} strokeWidth="2" strokeDasharray="8 8" />
-          <text x="150" y="60" textAnchor="middle" fontFamily={FONT} fontSize="32" fontWeight="600" fill={C.ink}>건물 안 사람들</text>
-          <text x="150" y="104" textAnchor="middle" fontFamily={FONT} fontSize="26" fill={C.red}>각자 알아서</text>
+          <rect x="0" y="0" width={pw} height="140" rx="14" fill="none" stroke={C.red} strokeWidth="2" strokeDasharray="8 8" />
+          <text x={pw / 2} y="60" textAnchor="middle" fontFamily={FONT} fontSize="32" fontWeight="600" fill={C.ink}>건물 안 사람들</text>
+          <text x={pw / 2} y="104" textAnchor="middle" fontFamily={FONT} fontSize="26" fill={C.red}>각자 알아서</text>
         </g>
       </svg>
       <FadeUp start={0} style={{ position: "absolute", top: 250, left: 0, right: 0, textAlign: "center", fontSize: 40, fontWeight: 700, color: C.ink }}>
