@@ -19,7 +19,7 @@ export const DURATION_FRAMES = Math.ceil(TOTAL_SECONDS * FPS);
 
 export type MainProps = { results: ResultsProps; close: CloseProps } & Record<string, unknown>;
 export const defaultProps: MainProps = {
-  results: { broadcastRisky: null, guidedRisky: null },
+  results: { broadcastRisky: 26, guidedRisky: 2, n: 50, note: "실험 A · 설문 100명(50명씩 두 집단) · 2026.10" },
   close: { url: "배포 URL (Vercel) — 배포 후 교체", repo: "github.com/mnunu123/AI-life" },
 };
 

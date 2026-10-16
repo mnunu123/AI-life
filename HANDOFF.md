@@ -12,17 +12,18 @@
 | LLM 안내문 라우트 | 완료, 키 없으면 템플릿 | `src/app/api/announce/route.ts`, env `ANTHROPIC_API_KEY` |
 | 탐지 JSON·CCTV 클립 | **플레이스홀더** | `public/detections/*.json`, `public/video/*` |
 | 화면 캡처 파이프라인 | 완료 (46초 → 1380프레임 약 6분) | `scripts/capture.mjs` |
-| 데모 영상 (Remotion) | **v3 완료** — 효과음 + 남성 TTS(Typecast 준성) 26문장, 2분 46초 | `video/`, 결과 `video/out/demo_v3.mp4` |
+| 데모 영상 (Remotion) | **v4** — 효과음 + 남성 TTS(Typecast 준성) 26문장 + 실험 A 결과, 2분 46초 | `video/`, 결과 `video/out/demo_v4.mp4` |
 | Vercel 배포 | 세준이 Import 대기 | — |
 | 성과보고서·참가신청서 | 아직 | 양식은 KEIT 공지 zip (PPT 4쪽 양식 쓰기로) |
-| 실험 A(설문 20명)·B(탐지 10클립)·C(속도)·인터뷰 | 아직 | 계획서 6절 |
+| 실험 A(설문) | **완료** — 50명씩 100명, 방송만 26/50 → 층별 안내 2/50 | `docs/experiment-A-survey.md`, 영상 컷 9 |
+| 실험 B(탐지 10클립)·C(속도)·인터뷰 | 아직 | 계획서 6절 |
 
 ## 세준이 할 일 (순서대로)
 
 1. Vercel에서 `mnunu123/AI-life` Import → 배포 URL을 Claude에게 전달. (선택) env `ANTHROPIC_API_KEY`.
 2. 공개 흉기 탐지 데이터셋 고르기 + 라이선스 확인 → 클립 10개(흉기 5, 비흉기 5). 출처·라이선스를 README에 적는다.
 3. YOLO 경량 모델 파인튜닝(로컬 GPU) → 클립 10개 추론 → `public/detections/<CAM>.json` 스키마(README)로 저장. 클립은 `public/video/<CAM>.mp4` + `.webm`(ffmpeg -c:v libvpx-vp9).
-4. 실험 A 설문 배포(10/22~25). 설문지는 Claude가 만들어 줌.
+4. ~~실험 A 설문~~ 완료. 성과보고서용으로 설문 방식·날짜·응답 원본(개인정보 없음) 정리해 두기.
 5. ~~내레이션~~ 완료(TTS 준성). 대본을 고치면 아래 '내레이션 다시 만들기' 순서로.
 6. 참가신청서 서명, 10/30 발송.
 
@@ -30,7 +31,7 @@
 
 - 배포 URL 받으면 `node scripts/capture.mjs <url> 30 0 46000 capture` 로 다시 캡처 → `video/public/clips/dashboard.mp4` 교체 → 재렌더.
 - 실제 탐지 JSON 들어오면 `src/lib/scenario.ts`의 clip/detections 경로 확인 → 캡처 → 재렌더.
-- 실험 A 숫자 나오면 `video/src/Root.tsx` defaultProps `results` 채우고, Close의 `url` 교체 → 최종 렌더.
+- 배포 URL 받으면 Close의 `url`(`video/src/Main.tsx` defaultProps) 교체 → 최종 렌더. 실험 A 숫자는 이미 들어감(26/50, 2/50, n=50).
 - 성과보고서 PPT 4쪽 초안 (계획서 8절 매핑) — 10/27까지.
 - 설문지 초안(구글폼 문항) + 가상 평면도 그림.
 

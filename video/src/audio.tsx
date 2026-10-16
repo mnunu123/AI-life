@@ -36,9 +36,12 @@ const CUES: Cue[] = [
   { src: "chime.wav", at: 80.9, vol: 0.8 },
   { src: "alert.wav", at: 86.0, vol: 0.9 },
   { src: "alert.wav", at: 100.0, vol: 0.9 },
-  // 컷 9 — 사람 아이콘 20개
-  ...Array.from({ length: 10 }, (_, i) => ({ src: "tick_soft.wav", at: 115.0 + i * 0.133, vol: 0.7 })),
-  ...Array.from({ length: 10 }, (_, i) => ({ src: "tick_soft.wav", at: 118.67 + i * 0.133, vol: 0.7 })),
+  // 컷 9 — 사람 아이콘 50개×2 (2프레임 간격, 틱은 한 칸 걸러), 숫자 등장, 결론
+  ...Array.from({ length: 25 }, (_, i) => ({ src: "tick_soft.wav", at: 113 + 70 / 30 + i * 0.133, vol: 0.6 })),
+  { src: "blip.wav", at: 113 + 176 / 30, vol: 0.9 },
+  ...Array.from({ length: 25 }, (_, i) => ({ src: "tick_soft.wav", at: 113 + 220 / 30 + i * 0.133, vol: 0.6 })),
+  { src: "blip.wav", at: 113 + 326 / 30, vol: 0.9 },
+  { src: "confirm.wav", at: 113 + 350 / 30, vol: 0.8 },
   // 컷 10 — 한계 3줄, 타이틀 타이핑
   ...[134.0, 134.87, 135.73].map((at) => ({ src: "blip.wav", at, vol: 0.6 })),
   { src: "typing_slow.wav", at: 139.53, len: 0.75 },
