@@ -62,10 +62,33 @@ export const BASE_LEN: Record<SceneKey, number> = Object.fromEntries(
   (Object.keys(BASE_SCENE) as SceneKey[]).map((k) => [k, BASE_SCENE[k].to - BASE_SCENE[k].from]),
 ) as Record<SceneKey, number>;
 
-interface Timing { scenes?: Record<SceneKey, { from: number; to: number }>; captions?: Caption[]; total?: number }
+/** 씬 시작 기준 [설계초, 실제초] 꺾은선. 자막 구간마다 필요한 만큼만 늘린다 */
+export type Warp = [number, number][];
+interface Timing { scenes?: Record<SceneKey, { from: number; to: number; warp?: Warp }>; captions?: Caption[]; total?: number }
 const T = timing as Timing;
 
 /** 실제로 쓰는 값: tools/retime.py가 만든 timing.json이 있으면 그것, 없으면 설계값 */
 export const SCENE: Record<SceneKey, { from: number; to: number }> = T.scenes ?? BASE_SCENE;
 export const CAPTIONS: Caption[] = T.captions ?? BASE_CAPTIONS;
 export const TOTAL_SECONDS: number = T.total ?? BASE_TOTAL;
+export const WARP: Record<SceneKey, Warp> = Object.fromEntries(
+  (Object.keys(BASE_SCENE) as SceneKey[]).map((k) => {
+    const w = T.scenes?.[k]?.warp;
+    const L0 = BASE_LEN[k];
+    const L = SCENE[k].to - SCENE[k].from;
+    return [k, w && w.length >= 2 ? w : [[0, 0], [L0, L]]];
+  }),
+) as Record<SceneKey, Warp>;
+
+/** 설계 시각(초) → 실제 시각(초). 효과음 큐 등 설계 타임라인 기준 값을 옮길 때 */
+export const mapTime = (t: number) => {
+  const keys = Object.keys(BASE_SCENE) as SceneKey[];
+  const k = keys.find((x) => t >= BASE_SCENE[x].from && t < BASE_SCENE[x].to) ?? "close";
+  const w = WARP[k];
+  const b = t - BASE_SCENE[k].from;
+  let i = 0;
+  while (i < w.length - 2 && b > w[i + 1][0]) i++;
+  const dx = w[i + 1][0] - w[i][0];
+  const s = dx > 0 ? (w[i + 1][1] - w[i][1]) / dx : 1;
+  return SCENE[k].from + w[i][1] + (b - w[i][0]) * s;
+};

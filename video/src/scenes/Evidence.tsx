@@ -1,6 +1,6 @@
 import React from "react";
 import {AbsoluteFill, Sequence } from "remotion";
-import { useSceneFrame, useStretch } from "../frame";
+import { useSceneFrame, useToActualFrame, SceneOffset } from "../frame";
 import { C, FONT, clamp01, ease } from "../theme";
 import { FadeUp, CountUp } from "../ui";
 
@@ -115,13 +115,12 @@ const Flow: React.FC = () => {
 };
 
 export const Evidence: React.FC = () => {
-  const s = useStretch();
-  const r = (n: number) => Math.round(n * s);
+  const A = useToActualFrame();
   return (
     <AbsoluteFill style={{ background: C.bg }}>
-      <Sequence from={0} durationInFrames={r(195)}><Phone /></Sequence>
-      <Sequence from={r(195)} durationInFrames={r(195)}><Cameras /></Sequence>
-      <Sequence from={r(390)} durationInFrames={r(240)}><Flow /></Sequence>
+      <Sequence from={0} durationInFrames={A(195)}><SceneOffset base={0}><Phone /></SceneOffset></Sequence>
+      <Sequence from={A(195)} durationInFrames={A(390) - A(195)}><SceneOffset base={195}><Cameras /></SceneOffset></Sequence>
+      <Sequence from={A(390)} durationInFrames={A(630) - A(390)}><SceneOffset base={390}><Flow /></SceneOffset></Sequence>
     </AbsoluteFill>
   );
 };

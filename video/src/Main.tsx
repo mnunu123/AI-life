@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
-import { SCENE, TOTAL_SECONDS, BASE_LEN, type SceneKey } from "./script";
+import { SCENE, TOTAL_SECONDS, WARP, type SceneKey } from "./script";
 import { FrameScale } from "./frame";
 import { C, ensureFont } from "./theme";
 import { Captions } from "./ui";
@@ -15,7 +15,7 @@ import { Sfx, Narration, type NarrationClip } from "./audio";
 import narrationManifest from "./narration.json";
 
 export const FPS = 30;
-export const DURATION_FRAMES = TOTAL_SECONDS * FPS;
+export const DURATION_FRAMES = Math.ceil(TOTAL_SECONDS * FPS);
 
 export type MainProps = { results: ResultsProps; close: CloseProps } & Record<string, unknown>;
 export const defaultProps: MainProps = {
@@ -40,7 +40,7 @@ const Cuts: React.FC = () => {
 export const Main: React.FC<MainProps> = ({ results, close }) => {
   ensureFont();
   const seq = (k: SceneKey) => ({ from: s2f(SCENE[k].from), durationInFrames: s2f(SCENE[k].to) - s2f(SCENE[k].from) });
-  const st = (k: SceneKey) => (SCENE[k].to - SCENE[k].from) / BASE_LEN[k];
+  const st = (k: SceneKey) => WARP[k];
   return (
     <AbsoluteFill style={{ background: C.bg }}>
       <Sequence {...seq("open")} name="1 cold open"><FrameScale value={st("open")}><Open /></FrameScale></Sequence>

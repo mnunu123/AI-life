@@ -1,6 +1,6 @@
 import React from "react";
 import { Audio, Sequence, staticFile, useVideoConfig } from "remotion";
-import { SCENE, BASE_SCENE, type SceneKey } from "./script";
+import { SCENE, BASE_SCENE, mapTime, type SceneKey } from "./script";
 
 /**
  * 효과음 큐. 시각은 '설계 타임라인'(BASE_SCENE) 기준 초.
@@ -10,13 +10,7 @@ import { SCENE, BASE_SCENE, type SceneKey } from "./script";
 interface Cue { src: string; at: number; vol?: number; len?: number; scene?: SceneKey }
 
 const KEYS = Object.keys(BASE_SCENE) as SceneKey[];
-const sceneOf = (t: number): SceneKey => KEYS.find((k) => t >= BASE_SCENE[k].from && t < BASE_SCENE[k].to) ?? "close";
-const stretchOf = (k: SceneKey) => (SCENE[k].to - SCENE[k].from) / (BASE_SCENE[k].to - BASE_SCENE[k].from);
-/** 설계 시각 → 실제 시각 */
-export const mapTime = (t: number) => {
-  const k = sceneOf(t);
-  return SCENE[k].from + (t - BASE_SCENE[k].from) * stretchOf(k);
-};
+/** 설계 시각 → 실제 시각은 script.ts의 mapTime(구간별 워프) */
 
 const B = BASE_SCENE;
 const CUES: Cue[] = [
@@ -66,9 +60,9 @@ export const Sfx: React.FC = () => {
     <>
       {CUES.map((c, i) => {
         const at = mapTime(c.at);
-        const s = stretchOf(sceneOf(c.at));
+        const len = c.len ? Math.max(1, Math.round((mapTime(c.at + c.len) - at) * fps)) : undefined;
         return (
-          <Sequence key={i} from={Math.round(at * fps)} durationInFrames={c.len ? Math.max(1, Math.round(c.len * s * fps)) : undefined} name={`sfx ${c.src}`}>
+          <Sequence key={i} from={Math.round(at * fps)} durationInFrames={len} name={`sfx ${c.src}`}>
             <Audio src={staticFile(`sfx/${c.src}`)} volume={c.vol ?? 1} />
           </Sequence>
         );
