@@ -4,6 +4,7 @@
 사용:
   export TYPECAST_API_KEY=...            # 키는 환경변수로만. 레포에 넣지 않는다.
   python tools/make_tts.py voices         # 음성 목록을 narration/voices.json에 저장하고 남성 음성 후보를 출력
+  python tools/make_tts.py sample --voice <voice_id> [--text "..."]   # 한 문장만 뽑아 sample_<voice>.wav 로 (음성 고를 때)
   python tools/make_tts.py gen --voice <voice_id> [--tempo 1.0] [--out public/narration]
   python tools/make_tts.py manifest [--out public/narration]   # 이미 있는 wav로 manifest만 다시
 
@@ -114,6 +115,20 @@ def cmd_gen(args):
     write_manifest(args.out, caps)
 
 
+def cmd_sample(args):
+    os.makedirs(args.out, exist_ok=True)
+    text = args.text or "빠진 건 탐지가 아닙니다. 탐지 뒤 60초, 누가 어디로 가야 하는가입니다."
+    body = {
+        "voice_id": args.voice, "text": text, "model": args.model, "language": "kor",
+        "prompt": {"emotion_preset": args.emotion, "emotion_intensity": 1},
+        "output": {"volume": 100, "audio_pitch": 0, "audio_tempo": args.tempo, "audio_format": "wav"}, "seed": 42,
+    }
+    audio = req("/v1/text-to-speech", body, accept_bytes=True)
+    fn = os.path.join(args.out, f"sample_{args.voice}.wav")
+    open(fn, "wb").write(audio)
+    print("wrote", fn, f"{wav_duration(fn):.2f}s")
+
+
 def cmd_manifest(args):
     write_manifest(args.out, captions())
 
@@ -124,11 +139,18 @@ if __name__ == "__main__":
     p = sub.add_parser("voices"); p.add_argument("--out", default=os.path.join(ROOT, "public", "narration"))
     p = sub.add_parser("gen")
     p.add_argument("--voice", required=True)
-    p.add_argument("--model", default="ssfm-v21")
+    p.add_argument("--model", default="ssfm-v30")
     p.add_argument("--emotion", default="normal")
     p.add_argument("--tempo", type=float, default=1.0)
     p.add_argument("--force", action="store_true")
     p.add_argument("--out", default=os.path.join(ROOT, "public", "narration"))
+    p = sub.add_parser("sample")
+    p.add_argument("--voice", required=True)
+    p.add_argument("--text")
+    p.add_argument("--model", default="ssfm-v30")
+    p.add_argument("--emotion", default="normal")
+    p.add_argument("--tempo", type=float, default=1.0)
+    p.add_argument("--out", default=os.path.join(ROOT, "public", "narration"))
     p = sub.add_parser("manifest"); p.add_argument("--out", default=os.path.join(ROOT, "public", "narration"))
     a = ap.parse_args()
-    {"voices": cmd_voices, "gen": cmd_gen, "manifest": cmd_manifest}[a.cmd](a)
+    {"voices": cmd_voices, "sample": cmd_sample, "gen": cmd_gen, "manifest": cmd_manifest}[a.cmd](a)
