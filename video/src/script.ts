@@ -2,9 +2,12 @@
  * 자막 = 내레이션 대본. 초 단위. 여기 글이 화면 아래 자막으로 나가고, 세준이 같은 글을 읽는다.
  * 사실 문장은 계획서 3절 근거에서 그대로 가져왔다. 숫자는 출처가 있는 것만.
  */
-export interface Caption { from: number; to: number; text: string }
+import timing from "./timing.json";
 
-export const SCENE = {
+export interface Caption { from: number; to: number; text: string }
+export type SceneKey = "open" | "iso" | "evidence" | "proposal" | "demo" | "results" | "close";
+
+export const BASE_SCENE = {
   open: { from: 0, to: 13 },
   iso: { from: 13, to: 32 },
   evidence: { from: 32, to: 53 },
@@ -14,12 +17,12 @@ export const SCENE = {
   close: { from: 133, to: 155 },
 } as const;
 
-export const TOTAL_SECONDS = 155;
+export const BASE_TOTAL = 155;
 
 /** 데모 구간: 영상 시각 = 캡처 시각 + DEMO_OFFSET (캡처 1.0초가 영상 68.0초) */
 export const DEMO_OFFSET = 67;
 
-export const CAPTIONS: Caption[] = [
+export const BASE_CAPTIONS: Caption[] = [
   { from: 0.6, to: 4.6, text: "2026년 10월 13일 오후 1시 48분, 인천 구월동 복합상업시설 2층 식당가." },
   { from: 4.8, to: 8.6, text: "5분이었습니다. 1층에서 2층으로, 다시 에스컬레이터로." },
   { from: 8.8, to: 12.6, text: "열 명이 다쳤습니다." },
@@ -53,3 +56,16 @@ export const CAPTIONS: Caption[] = [
   { from: 139.6, to: 145.2, text: "하지만 탐지에서 멈추지 않고, 건물 안 사람들에게 처음으로 말을 겁니다." },
   { from: 145.8, to: 151.0, text: "60초 안내. 다중이용시설 흉기난동 실내 대피 유도 AI." },
 ];
+
+/** 설계 길이(초). 내레이션에 맞춰 늘릴 때 배율의 기준 */
+export const BASE_LEN: Record<SceneKey, number> = Object.fromEntries(
+  (Object.keys(BASE_SCENE) as SceneKey[]).map((k) => [k, BASE_SCENE[k].to - BASE_SCENE[k].from]),
+) as Record<SceneKey, number>;
+
+interface Timing { scenes?: Record<SceneKey, { from: number; to: number }>; captions?: Caption[]; total?: number }
+const T = timing as Timing;
+
+/** 실제로 쓰는 값: tools/retime.py가 만든 timing.json이 있으면 그것, 없으면 설계값 */
+export const SCENE: Record<SceneKey, { from: number; to: number }> = T.scenes ?? BASE_SCENE;
+export const CAPTIONS: Caption[] = T.captions ?? BASE_CAPTIONS;
+export const TOTAL_SECONDS: number = T.total ?? BASE_TOTAL;

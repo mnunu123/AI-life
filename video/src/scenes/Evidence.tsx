@@ -1,5 +1,6 @@
 import React from "react";
-import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
+import {AbsoluteFill, Sequence } from "remotion";
+import { useSceneFrame, useStretch } from "../frame";
 import { C, FONT, clamp01, ease } from "../theme";
 import { FadeUp, CountUp } from "../ui";
 
@@ -12,7 +13,7 @@ const Source: React.FC<{ text: string; start: number }> = ({ text, start }) => (
 );
 
 const Phone: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   const stamp = ease(clamp01((f - 70) / 12));
   const rows = ["폭염 경보 · 야외활동 자제", "호우주의보 · 하천 접근 금지", "미세먼지 주의보", "폭염 경보 · 야외활동 자제"];
   return (
@@ -40,7 +41,7 @@ const Phone: React.FC = () => {
 };
 
 const Cameras: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   const cols = 37, rows = 13; // 481
   const lit = Math.floor(ease(clamp01((f - 10) / 70)) * 481);
   return (
@@ -69,7 +70,7 @@ const Cameras: React.FC = () => {
 };
 
 const Flow: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   const boxes = ["CCTV 영상", "지능형 탐지", "관제요원 112 신고"];
   // 상자 3 + 끊긴 연결(100) + 점선 상자(300)를 한 덩어리로 가운데 정렬
   const bw = 330, gap = 70, y = 470, pw = 300, cutGap = 130;
@@ -113,10 +114,14 @@ const Flow: React.FC = () => {
   );
 };
 
-export const Evidence: React.FC = () => (
-  <AbsoluteFill style={{ background: C.bg }}>
-    <Sequence from={0} durationInFrames={195}><Phone /></Sequence>
-    <Sequence from={195} durationInFrames={195}><Cameras /></Sequence>
-    <Sequence from={390} durationInFrames={240}><Flow /></Sequence>
-  </AbsoluteFill>
-);
+export const Evidence: React.FC = () => {
+  const s = useStretch();
+  const r = (n: number) => Math.round(n * s);
+  return (
+    <AbsoluteFill style={{ background: C.bg }}>
+      <Sequence from={0} durationInFrames={r(195)}><Phone /></Sequence>
+      <Sequence from={r(195)} durationInFrames={r(195)}><Cameras /></Sequence>
+      <Sequence from={r(390)} durationInFrames={r(240)}><Flow /></Sequence>
+    </AbsoluteFill>
+  );
+};

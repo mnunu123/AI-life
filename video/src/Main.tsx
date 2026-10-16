@@ -1,6 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Sequence, useCurrentFrame } from "remotion";
-import { SCENE, TOTAL_SECONDS } from "./script";
+import { SCENE, TOTAL_SECONDS, BASE_LEN, type SceneKey } from "./script";
+import { FrameScale } from "./frame";
 import { C, ensureFont } from "./theme";
 import { Captions } from "./ui";
 import { Open } from "./scenes/Open";
@@ -10,6 +11,8 @@ import { Proposal } from "./scenes/Proposal";
 import { Demo } from "./scenes/Demo";
 import { Results, type ResultsProps } from "./scenes/Results";
 import { Close, type CloseProps } from "./scenes/Close";
+import { Sfx, Narration, type NarrationClip } from "./audio";
+import narrationManifest from "./narration.json";
 
 export const FPS = 30;
 export const DURATION_FRAMES = TOTAL_SECONDS * FPS;
@@ -36,18 +39,21 @@ const Cuts: React.FC = () => {
 
 export const Main: React.FC<MainProps> = ({ results, close }) => {
   ensureFont();
-  const seq = (k: keyof typeof SCENE) => ({ from: s2f(SCENE[k].from), durationInFrames: s2f(SCENE[k].to) - s2f(SCENE[k].from) });
+  const seq = (k: SceneKey) => ({ from: s2f(SCENE[k].from), durationInFrames: s2f(SCENE[k].to) - s2f(SCENE[k].from) });
+  const st = (k: SceneKey) => (SCENE[k].to - SCENE[k].from) / BASE_LEN[k];
   return (
     <AbsoluteFill style={{ background: C.bg }}>
-      <Sequence {...seq("open")} name="1 cold open"><Open /></Sequence>
-      <Sequence {...seq("iso")} name="2 isometric"><Iso /></Sequence>
-      <Sequence {...seq("evidence")} name="3 evidence"><Evidence /></Sequence>
-      <Sequence {...seq("proposal")} name="4 proposal"><Proposal /></Sequence>
+      <Sequence {...seq("open")} name="1 cold open"><FrameScale value={st("open")}><Open /></FrameScale></Sequence>
+      <Sequence {...seq("iso")} name="2 isometric"><FrameScale value={st("iso")}><Iso /></FrameScale></Sequence>
+      <Sequence {...seq("evidence")} name="3 evidence"><FrameScale value={st("evidence")}><Evidence /></FrameScale></Sequence>
+      <Sequence {...seq("proposal")} name="4 proposal"><FrameScale value={st("proposal")}><Proposal /></FrameScale></Sequence>
       <Sequence {...seq("demo")} name="5-8 demo capture"><Demo /></Sequence>
-      <Sequence {...seq("results")} name="9 results"><Results {...results} /></Sequence>
-      <Sequence {...seq("close")} name="10 close"><Close {...close} /></Sequence>
+      <Sequence {...seq("results")} name="9 results"><FrameScale value={st("results")}><Results {...results} /></FrameScale></Sequence>
+      <Sequence {...seq("close")} name="10 close"><FrameScale value={st("close")}><Close {...close} /></FrameScale></Sequence>
       <Captions />
       <Cuts />
+      <Sfx />
+      <Narration clips={narrationManifest as NarrationClip[]} />
     </AbsoluteFill>
   );
 };

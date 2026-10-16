@@ -1,11 +1,12 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
+import {AbsoluteFill, useVideoConfig } from "remotion";
+import { useSceneFrame } from "../frame";
 import { C, FONT, clamp01, ease } from "../theme";
 import { FadeUp, CountUp } from "../ui";
 
 /** 컷 1: 검은 화면, 시각이 13:48에서 13:53으로 흐른다. 5분. 열 명. */
 export const Open: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
 

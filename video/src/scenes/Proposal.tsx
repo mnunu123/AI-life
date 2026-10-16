@@ -1,5 +1,6 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import {AbsoluteFill } from "remotion";
+import { useSceneFrame } from "../frame";
 import { C, FONT, clamp01, ease } from "../theme";
 import { Reveal, FadeUp } from "../ui";
 
@@ -13,7 +14,7 @@ const BOXES: { name: string; a: string; b: string; main: boolean }[] = [
 ];
 
 export const Proposal: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   // 0~150: 문장. 150~: 문장이 위로 올라가고 아키텍처 등장
   const lift = ease(clamp01((f - 150) / 24));
   const bw = 320, gap = 40, y = 520, x0 = (1920 - (bw * 5 + gap * 4)) / 2;

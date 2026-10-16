@@ -1,5 +1,6 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import {AbsoluteFill } from "remotion";
+import { useSceneFrame } from "../frame";
 import { C, FONT, clamp01, ease, easeInOut } from "../theme";
 
 /** 컷 2: 아이소메트릭 3층 건물. 빨간 점이 층을 옮겨 다니고, 사람들은 제각각 흩어진다. 방송은 전층 똑같다. */
@@ -50,7 +51,7 @@ function threatAt(f: number): { floor: number; x: number; y: number; z: number; 
 }
 
 export const Iso: React.FC = () => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   const appear = ease(clamp01(f / 40));
   const th = threatAt(f);
   const broadcast = f >= 300;

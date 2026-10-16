@@ -1,5 +1,6 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import {AbsoluteFill } from "remotion";
+import { useSceneFrame } from "../frame";
 import { C, FONT, clamp01, ease } from "../theme";
 import { FadeUp } from "../ui";
 
@@ -9,7 +10,7 @@ import { FadeUp } from "../ui";
 export interface ResultsProps { broadcastRisky: number | null; guidedRisky: number | null }
 
 const Person: React.FC<{ state: "idle" | "risky" | "safe" | "unknown"; delay: number }> = ({ state, delay }) => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   const p = ease(clamp01((f - delay) / 10));
   const color = state === "risky" ? C.red : state === "safe" ? C.green : state === "unknown" ? C.line : C.muted;
   return (
@@ -22,7 +23,7 @@ const Person: React.FC<{ state: "idle" | "risky" | "safe" | "unknown"; delay: nu
 };
 
 export const Results: React.FC<ResultsProps> = ({ broadcastRisky, guidedRisky }) => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   const row = (label: string, risky: number | null, top: number, startFrame: number) => (
     <div style={{ position: "absolute", top, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 18 }}>
       <FadeUp start={startFrame - 10} style={{ fontFamily: FONT, fontSize: 34, fontWeight: 600, color: C.ink }}>{label}</FadeUp>

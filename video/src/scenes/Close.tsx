@@ -1,5 +1,6 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import {AbsoluteFill } from "remotion";
+import { useSceneFrame } from "../frame";
 import { C, FONT, clamp01, ease } from "../theme";
 import { FadeUp, Reveal } from "../ui";
 
@@ -7,7 +8,7 @@ import { FadeUp, Reveal } from "../ui";
 export interface CloseProps { url: string; repo: string }
 
 export const Close: React.FC<CloseProps> = ({ url, repo }) => {
-  const f = useCurrentFrame();
+  const f = useSceneFrame();
   const limits = ["우산이나 긴 물건을 흉기로 볼 때가 있다", "군중 급이탈은 학습이 아니라 규칙으로 잡는다", "실제 방송·비상등 장비와는 아직 연결하지 않았다"];
   const phase2 = f >= 190; // 6.3s
   const fade = ease(clamp01((f - 180) / 12));
