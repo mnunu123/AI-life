@@ -57,8 +57,22 @@ def req(path, data=None, accept_bytes=False, timeout=90):
 
 
 def wav_duration(path):
-    with wave.open(path, "rb") as w:
-        return w.getnframes() / w.getframerate()
+    if path.lower().endswith(".wav"):
+        with wave.open(path, "rb") as w:
+            return w.getnframes() / w.getframerate()
+    # mp3 등은 ffprobe
+    import subprocess
+    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
+                         capture_output=True, text=True, check=True).stdout.strip()
+    return float(out)
+
+
+def find_clip(out, i):
+    for ext in ("wav", "mp3"):
+        p = os.path.join(out, f"{i:02d}.{ext}")
+        if os.path.exists(p):
+            return p
+    return None
 
 
 def cmd_voices(args):
@@ -78,11 +92,10 @@ def cmd_voices(args):
 def write_manifest(out, caps):
     man = []
     for i, c in enumerate(caps):
-        fn = f"{i:02d}.wav"
-        p = os.path.join(out, fn)
-        if not os.path.exists(p):
+        p = find_clip(out, i)
+        if not p:
             continue
-        man.append({"file": fn, "idx": i, "text": c["text"], "base_from": c["from"], "base_to": c["to"], "dur": round(wav_duration(p), 3)})
+        man.append({"file": os.path.basename(p), "idx": i, "text": c["text"], "base_from": c["from"], "base_to": c["to"], "dur": round(wav_duration(p), 3)})
     with open(os.path.join(out, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(man, f, ensure_ascii=False, indent=1)
     total = sum(m["dur"] for m in man)

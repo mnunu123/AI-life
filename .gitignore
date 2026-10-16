@@ -49,3 +49,4 @@ video/out
 video/public/clips
 video/public/sfx/*.wav
 video/public/narration/
+__pycache__/
