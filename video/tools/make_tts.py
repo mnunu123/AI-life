@@ -37,8 +37,10 @@ def captions():
     src = open(os.path.join(ROOT, "src", "script.ts"), encoding="utf-8").read()
     body = src.split("BASE_CAPTIONS: Caption[] = [", 1)[1].split("\n];", 1)[0]
     out = []
-    for m in re.finditer(r'from:\s*([\d.]+),\s*to:\s*([\d.]+),\s*text:\s*"((?:[^"\\]|\\.)*)"', body):
-        out.append({"from": float(m.group(1)), "to": float(m.group(2)), "text": m.group(3).replace('\\"', '"')})
+    for m in re.finditer(r'from:\s*([\d.]+),\s*to:\s*([\d.]+),\s*text:\s*"((?:[^"\\]|\\.)*)"(?:,\s*tts:\s*"((?:[^"\\]|\\.)*)")?', body):
+        text = m.group(3).replace('\\"', '"')
+        tts = (m.group(4) or text).replace('\\"', '"')
+        out.append({"from": float(m.group(1)), "to": float(m.group(2)), "text": text, "tts": tts})
     if not out:
         sys.exit("자막을 못 읽었습니다. script.ts 형식을 확인하세요.")
     return out
@@ -113,7 +115,7 @@ def cmd_gen(args):
             continue
         body = {
             "voice_id": args.voice,
-            "text": c["text"],
+            "text": c["tts"],
             "model": args.model,
             "language": "kor",
             "prompt": {"emotion_preset": args.emotion, "emotion_intensity": 1},
@@ -123,7 +125,7 @@ def cmd_gen(args):
         audio = req("/v1/text-to-speech", body, accept_bytes=True)
         with open(fn, "wb") as f:
             f.write(audio)
-        print(f"{i:02d} {wav_duration(fn):5.2f}s  {c['text'][:40]}")
+        print(f"{i:02d} {wav_duration(fn):5.2f}s  {c['tts'][:40]}")
         time.sleep(0.3)
     write_manifest(args.out, caps)
 

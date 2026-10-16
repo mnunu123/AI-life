@@ -4,7 +4,7 @@
  */
 import timing from "./timing.json";
 
-export interface Caption { from: number; to: number; text: string }
+export interface Caption { from: number; to: number; text: string; tts?: string }  // tts: 읽기용 텍스트(숫자 읽는 법 등), 없으면 text
 export type SceneKey = "open" | "iso" | "evidence" | "proposal" | "demo" | "results" | "close";
 
 export const BASE_SCENE = {
@@ -34,7 +34,7 @@ export const BASE_CAPTIONS: Caption[] = [
 
   { from: 32.2, to: 38.2, text: "재난문자는 오지 않습니다. 2023년 서현역 때 성남시는 \"발송 대상이 아니다\"라고 답했습니다." },
   { from: 38.6, to: 44.8, text: "관제요원 한 명이 CCTV 481대를 봅니다. 서울은 1,200대입니다." },
-  { from: 45.2, to: 52.6, text: "지능형 CCTV는 흉기를 잡고 112에 신고합니다. 건물 안 사람들에게는 아무도 말해주지 않습니다." },
+  { from: 45.2, to: 52.6, text: "지능형 CCTV는 흉기를 잡고 112에 신고합니다. 건물 안 사람들에게는 아무도 말해주지 않습니다.", tts: "지능형 CCTV는 흉기를 잡고 일일이에 신고합니다. 건물 안 사람들에게는 아무도 말해주지 않습니다." },
 
   { from: 53.2, to: 58.2, text: "빠진 건 탐지가 아닙니다. 탐지 뒤 60초, 누가 어디로 가야 하는가입니다." },
   { from: 58.4, to: 63.4, text: "그래서 두 칸을 만들었습니다. 어디서 났는지 찾고, 층마다 다른 안내를 만듭니다." },
