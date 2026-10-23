@@ -34,6 +34,15 @@ npm test           # 판단 엔진 테스트
 
 환경변수(선택): `ANTHROPIC_API_KEY`, `LLM_MODEL`(기본 `claude-haiku-5-5`). 없으면 템플릿 안내문으로 동작한다.
 
+## 처리 속도 재현 (성과보고서 실험 1)
+
+```bash
+npx rolldown scripts/bench-engine.ts --format esm --file /tmp/bench.mjs && node /tmp/bench.mjs
+```
+
+24개 구역을 하나씩 위험 위치로 놓고 판단 + 템플릿 안내문을 200회씩 돌린다. 보고서 숫자는 3번 실행(14,400회) 결과다.
+생성형 AI 문장은 API 응답을 최대 8초까지만 기다리고, 넘거나 실패하면 템플릿 문장을 낸다.
+
 ## 탐지 결과 JSON 스키마
 
 ```json

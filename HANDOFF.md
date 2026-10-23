@@ -3,7 +3,7 @@
 마감 10/31(토) 24:00, 실제 목표 10/30(금) 오전 메일 발송 → relations2@keit.re.kr
 계획서(공고 정리·근거·일정·체크리스트): claude.ai/code/artifact/b5a779d1-7ae4-461b-99f8-eb22a92562ad
 
-## 지금 상태 (10/16 오후)
+## 지금 상태 (10/23 낮)
 
 | 덩어리 | 상태 | 위치 |
 | --- | --- | --- |
@@ -13,14 +13,14 @@
 | 탐지 JSON·CCTV 클립 | **플레이스홀더** | `public/detections/*.json`, `public/video/*` |
 | 화면 캡처 파이프라인 | 완료 (46초 → 1380프레임 약 6분) | `scripts/capture.mjs` |
 | 데모 영상 (Remotion) | **v4** — 효과음 + 남성 TTS(Typecast 준성) 26문장 + 실험 A 결과, 2분 46초 | `video/`, 결과 `video/out/demo_v4.mp4` |
-| Vercel 배포 | 세준이 Import 대기 | — |
-| 성과보고서·참가신청서 | 아직 | 양식은 KEIT 공지 zip (PPT 4쪽 양식 쓰기로) |
+| Vercel 배포 | **10/23 빌드 고침, 배포 성공** — 10/16부터 7번 실패했던 원인은 루트 tsconfig가 `video/`(Remotion)까지 타입검사한 것. `exclude`에 `video` 추가 | 운영 도메인은 세준 Vercel 화면에서 확인 필요 |
+| 성과보고서·참가신청서 | **초안 전달(10/23)** — PPT 양식 4쪽 채움(양식 원래 요소는 그대로), 참가신청서는 성명·소속·신청인 이름만 | 개인정보가 있어 레포에는 안 올림. 남은 칸: URL, 영상 링크, 설문 기간·문항, 생년월일·연락처·이메일·동의·서명 |
 | 실험 A(설문) | **완료** — 50명씩 100명, 방송만 26/50 → 층별 안내 2/50 | `docs/experiment-A-survey.md`, 영상 컷 9 |
 | 실험 B(탐지 10클립)·C(속도)·인터뷰 | 아직 | 계획서 6절 |
 
 ## 세준이 할 일 (순서대로)
 
-1. Vercel에서 `mnunu123/AI-life` Import → 배포 URL을 Claude에게 전달. (선택) env `ANTHROPIC_API_KEY`.
+1. Vercel 운영 도메인(로그인 없이 열리는 주소)을 Claude에게 전달. env `ANTHROPIC_API_KEY` 넣고 재배포 — 없으면 대시보드에 "템플릿 (API 키 없음)"이 떠서 생성형 AI가 안 보인다.
 2. 공개 흉기 탐지 데이터셋 고르기 + 라이선스 확인 → 클립 10개(흉기 5, 비흉기 5). 출처·라이선스를 README에 적는다.
 3. YOLO 경량 모델 파인튜닝(로컬 GPU) → 클립 10개 추론 → `public/detections/<CAM>.json` 스키마(README)로 저장. 클립은 `public/video/<CAM>.mp4` + `.webm`(ffmpeg -c:v libvpx-vp9).
 4. ~~실험 A 설문~~ 완료. 성과보고서용으로 설문 방식·날짜·응답 원본(개인정보 없음) 정리해 두기.
